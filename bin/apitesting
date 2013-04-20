@@ -1,9 +1,14 @@
 #!/usr/bin/env ruby
-require 'tweetstream'
-require 'yaml'
-
 lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
 $LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require 'tweetstream'
+require 'yaml'
+require 'active_record'
+require 'pg'
+
+Dir['lib/*.rb'].each { |f| require f.gsub("lib/", "") }
+
 settings = YAML.load IO.read(File.expand_path(File.dirname(__FILE__) + '/../config/application.yml'))
 
 TweetStream.configure do |config|
@@ -13,3 +18,6 @@ TweetStream.configure do |config|
   config.oauth_token_secret = settings['oauth_token_secret']
   config.auth_method = :oauth
 end
+
+db = DbConnect.new
+l = MentionTrack.new

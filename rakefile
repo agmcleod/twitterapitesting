@@ -1,0 +1,23 @@
+# ./Rakefile
+
+$: << './lib'
+require 'db_connect'
+
+db = DbConnect.new
+config = db.config
+
+desc 'create the database'
+task :create_db do
+  ActiveRecord::Base.connection.create_database config['database']
+end
+
+desc 'create the mentions table'
+task :create_mentions_table do
+  ActiveRecord::Schema.define(:version => 0) do
+    create_table "mentions", :force => true do |t|
+      t.string   "text"
+      t.datetime "created_at", :null => false
+      t.datetime "updated_at", :null => false
+    end
+  end
+end
