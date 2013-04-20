@@ -1,4 +1,4 @@
 source 'http://rubygems.org'
 
 gem 'tweetstream'
-gem 'active_record'
+gem 'activerecord', '~> 3.2.13'
