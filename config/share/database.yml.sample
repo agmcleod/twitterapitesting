@@ -1,0 +1,4 @@
+adapter: sqlite3
+database: tweet_hack
+username:
+password:
