@@ -1,4 +1,4 @@
 adapter: sqlite3
-database: tweet_hack
+database: tweet_hack.sqlite
 username:
 password:
