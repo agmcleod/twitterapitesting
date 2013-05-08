@@ -10,7 +10,6 @@ class MentionTrack
     client.on_error do |message|
       puts message
     end
-
     @parser = Parser.new
 
     client.track("@atweetdungeon") do |status|
