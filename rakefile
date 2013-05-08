@@ -11,11 +11,36 @@ task :create_db do
   ActiveRecord::Base.connection.create_database config['database']
 end
 
-desc 'create the mentions table'
-task :create_mentions_table do
+desc 'migrate the db'
+task :migrate do
   ActiveRecord::Schema.define(:version => 0) do
     create_table "mentions", :force => true do |t|
       t.string   "text"
+      t.datetime "created_at", :null => false
+      t.datetime "updated_at", :null => false
+    end
+
+    create_table "users", :force => true do |t|
+      t.string "name"
+      t.integer "room_id"
+      t.datetime "created_at", :null => false
+      t.datetime "updated_at", :null => false
+    end
+
+    create_table "rooms", :force => true do |t|
+      t.integer "dungeon_id"
+      t.datetime "created_at", :null => false
+      t.datetime "updated_at", :null => false
+    end
+
+    create_table "exits", :force => true do |t|
+      t.integer "room_one_id"
+      t.integer "room_two_id"
+      t.datetime "created_at", :null => false
+      t.datetime "updated_at", :null => false
+    end
+
+    create_table "dungeons", :force => true do |t|
       t.datetime "created_at", :null => false
       t.datetime "updated_at", :null => false
     end
