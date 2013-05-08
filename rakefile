@@ -30,6 +30,7 @@ task :migrate do
 
     create_table "rooms", :force => true do |t|
       t.integer "dungeon_id"
+      t.string "name"
       t.datetime "created_at", :null => false
       t.datetime "updated_at", :null => false
     end
