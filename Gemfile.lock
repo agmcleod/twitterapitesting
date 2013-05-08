@@ -56,5 +56,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (~> 3.2.13)
+  activesupport (~> 3.2.13)
   pg
   tweetstream
