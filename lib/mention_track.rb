@@ -22,7 +22,8 @@ class MentionTrack
     client.track("@atweetdungeon") do |status|
       puts "logged: #{status.text}"
       # parse
-      user, klass, args = @parser.parse(status.text)
+      user = user = User.find_or_create_by(name: status.user.screen_name)
+      klass, args = @parser.parse(status.text)
       user.room = rooms[0]
       puts klass.inspect
       # perform
