@@ -5,10 +5,11 @@ $LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
 require 'tweetstream'
 require 'yaml'
 require 'active_record'
-
-Dir['lib/*.rb'].each { |f| require f.gsub("lib/", "") }
+require 'active_support/all'
+Dir['./lib/**/*.rb'].each { |f| require f }
 
 settings = YAML.load IO.read(File.expand_path(File.dirname(__FILE__) + '/../config/application.yml'))
+
 
 TweetStream.configure do |config|
   config.consumer_key = settings['consumer_key']
