@@ -1,5 +1,3 @@
-require 'command'
-
 class MentionTrack
   def initialize
     accnt = "@atweetdungeon"
@@ -11,6 +9,7 @@ class MentionTrack
       puts message
     end
     @parser = Parser.new
+    @responder = Responder.new
 
     dungeon = Dungeon.new
     dungeon.rooms = [Room.new, Room.new, Room.new]
@@ -29,10 +28,15 @@ class MentionTrack
       if klass <= Command
         context = {user: user, dungeon: dungeon, exits: exits}
         commander = klass.new(context)
-        commander.perform(args)
+        response = commander.perform(args)
+
+        #respond_to
+        @responder.respond_to(user, response)
+
       else
         puts "Not a valid command"
       end
+
     end
   end
 end
