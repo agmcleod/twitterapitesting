@@ -20,8 +20,9 @@ class MentionTrack
       puts Mention.all.to_a.inspect
       # parse
       user, klass, args = @parser.parse(status.text)
+      puts klass.inspect
       # perform
-      if klass.is_a?(Command)
+      if klass <= Command
         context = {user: user}
         commander = klass.new(context)
         commander.perform(args)
