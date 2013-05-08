@@ -1,7 +1,4 @@
 require 'command'
-require 'exit'
-require 'room'
-require 'dungeon'
 
 class MentionTrack
   def initialize
@@ -24,15 +21,13 @@ class MentionTrack
 
     client.track("@atweetdungeon") do |status|
       puts "logged: #{status.text}"
-      Mention.create!(text: status.text, username: status.user.name)
-
-      puts Mention.all.to_a.inspect
       # parse
       user, klass, args = @parser.parse(status.text)
+      user.room = rooms[0]
       puts klass.inspect
       # perform
       if klass <= Command
-        context = {user: user}
+        context = {user: user, dungeon: dungeon, exits: exits}
         commander = klass.new(context)
         commander.perform(args)
       else
