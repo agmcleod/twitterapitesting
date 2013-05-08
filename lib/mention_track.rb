@@ -1,4 +1,7 @@
 require 'command'
+require 'exit'
+require 'room'
+require 'dungeon'
 
 class MentionTrack
   def initialize
@@ -11,6 +14,13 @@ class MentionTrack
       puts message
     end
     @parser = Parser.new
+
+    dungeon = Dungeon.new
+    dungeon.rooms = [Room.new, Room.new, Room.new]
+    exits = [
+      Exit.new(room_one: dungeon.rooms[0], room_two: dungeon.rooms[1]),
+      Exit.new(room_one: dungeon.rooms[1], room_two: dungeon.rooms[2])
+    ]
 
     client.track("@atweetdungeon") do |status|
       puts "logged: #{status.text}"

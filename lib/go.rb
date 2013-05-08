@@ -1,7 +1,7 @@
 class Go
   class << self
     def do(*args)
-      puts "#{self.class} do"
+      puts "#{self} do"
     end
   end
 end
