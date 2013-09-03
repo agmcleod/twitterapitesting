@@ -8,7 +8,6 @@ class MentionTrack
     client.on_error do |message|
       puts message
     end
-    @parser = Parser.new
     @responder = Responder.new
 
     dungeon = Dungeon.new
@@ -21,8 +20,8 @@ class MentionTrack
     client.track("@atweetdungeon") do |status|
       puts "logged: #{status.text}"
       # parse
-      user = user = User.find_or_create_by(name: status.user.screen_name)
-      klass, args = @parser.parse(status.text)
+      user = User.find_or_create_by(name: status.user.screen_name)
+      klass, args = Parser.parse(status.text)
       user.room = rooms[0]
       puts klass.inspect
       # perform
