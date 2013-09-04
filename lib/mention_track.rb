@@ -10,23 +10,29 @@ class MentionTrack
     end
     @responder = Responder.new
 
-    dungeon = Dungeon.new
-    dungeon.rooms = [Room.new, Room.new, Room.new]
-    exits = [
-      Exit.new(room_one: dungeon.rooms[0], room_two: dungeon.rooms[1]),
-      Exit.new(room_one: dungeon.rooms[1], room_two: dungeon.rooms[2])
-    ]
+    dungeon = if Dungeon.count == 0
+      dungeon = Dungeon.new
+      ActiveRecord::Base.transaction do
+        dungeon.rooms = [Room.new(name: "entrance"), Room.new(name: "hall"), Room.new(name: "dining hall")]
+        dungeon.save!
+        Exit.create! room_one: dungeon.rooms[0], room_two: dungeon.rooms[1]
+        Exit.create! room_one: dungeon.rooms[1], room_two: dungeon.rooms[2]
+      end
+      dungeon
+    else
+      Dungeon.first
+    end
 
     client.track("@atweetdungeon") do |status|
       puts "logged: #{status.text}"
       # parse
-      user = User.find_or_create_by(name: status.user.screen_name)
+      user = initialize_user(dungeon, status.user.screen_name)
       klass, args = Parser.parse(status.text)
-      user.room = rooms[0]
+
       puts klass.inspect
       # perform
       if klass <= Command
-        context = {user: user, dungeon: dungeon, exits: exits}
+        context = {user: user, dungeon: dungeon}
         commander = klass.new(context)
         response = commander.perform(args)
 
@@ -38,5 +44,14 @@ class MentionTrack
       end
 
     end
+  end
+
+  def initialize_user(dungeon, user_name)
+    user = User.find_or_create_by(name: user_name)
+    if user.room.nil?
+      user.room = dungeon.rooms[0]
+      user.save!
+    end
+    user
   end
 end
