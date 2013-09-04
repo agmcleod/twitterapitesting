@@ -6,11 +6,6 @@ require 'db_connect'
 db = DbConnect.new
 config = db.config
 
-desc 'create the database'
-task :create_db do
-  ActiveRecord::Base.connection.create_database config['database']
-end
-
 desc 'migrate the db'
 task :migrate do
   ActiveRecord::Schema.define(:version => 0) do
