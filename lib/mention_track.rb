@@ -1,5 +1,6 @@
 class MentionTrack
   def initialize
+    @settings = YAML.load IO.read(File.expand_path(File.dirname(__FILE__) + '/../config/application.yml'))
     accnt = "@atweetdungeon"
 
     puts 'stream should start'
@@ -10,7 +11,14 @@ class MentionTrack
     end
     @responder = Responder.new
 
-    dungeon = if Dungeon.count == 0
+    listen_to_mentions(client)
+  end
+
+private
+
+  def get_dungeon
+    # TODO: Dungeon needs to be scoped per twitter user
+    if Dungeon.count == 0
       dungeon = Dungeon.new
       ActiveRecord::Base.transaction do
         dungeon.rooms = [Room.new(name: "entrance"), Room.new(name: "hall"), Room.new(name: "dining hall")]
@@ -22,11 +30,24 @@ class MentionTrack
     else
       Dungeon.first
     end
+  end
 
-    client.track("@atweetdungeon") do |status|
+  def get_user(dungeon, user_name)
+    user = User.find_or_create_by(name: user_name)
+    if user.room.nil?
+      user.room = dungeon.rooms[0]
+      user.save!
+    end
+    user
+  end
+
+  def listen_to_mentions(client)
+    dungeon = get_dungeon
+    puts 'start listening'
+    client.on_direct_message do |status|
       puts "logged: #{status.text}"
       # parse
-      user = initialize_user(dungeon, status.user.screen_name)
+      user = get_user(dungeon, status.user.screen_name)
       klass, args = Parser.parse(status.text)
 
       puts klass.inspect
@@ -42,16 +63,8 @@ class MentionTrack
       else
         puts "Not a valid command"
       end
-
     end
-  end
 
-  def initialize_user(dungeon, user_name)
-    user = User.find_or_create_by(name: user_name)
-    if user.room.nil?
-      user.room = dungeon.rooms[0]
-      user.save!
-    end
-    user
+    client.userstream
   end
 end
